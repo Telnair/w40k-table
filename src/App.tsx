@@ -31,7 +31,7 @@ const FactionTable: React.FC = () => {
     <article className="table__player">
       <p>Faction: <Editable initialValue="Name" className="accented" /></p>
       <p className="important">CP: <Counter /></p>
-      <p className="important">VP: <span className="accented">{totalVP}</span></p>
+      <p className="important">VP: <span className="accented" style={{ cursor: 'default' }}>{totalVP}</span></p>
       <ul className="objectives">
         <li>Primary: <Counter step={5} onChange={makeVPChangeHandler(0)} /></li>
         <li><Editable initialValue="Sec 1" />: <Counter onChange={makeVPChangeHandler(1)} /></li>
@@ -84,7 +84,7 @@ const Counter: React.FC<{ initialValue?: number; step?: number; onChange?: (valu
   }
 
   return (
-    <span style={{ width: 50 }} className="accented" onClick={handleClick}>{value}</span>
+    <span className="accented counter" onClick={handleClick}>{value}</span>
   );
 };
 

@@ -88,3 +88,9 @@ p.important {
   font-size: 36px;
   user-select: none;
 }
+
+.counter {
+  width: 80px;
+  display: inline-block;
+  text-align: left;
+}
