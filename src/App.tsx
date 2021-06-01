@@ -6,10 +6,12 @@ const App: React.FC = () => {
 
   return (
     <main>
-      <h1 className="mission">
-        <Editable initialValue="Mission" className="accented" />
-      </h1>
-      <h2 className="round">Round: <Counter onChange={setRound} value={round} /></h2>
+      <section className="general">
+        <h1 className="mission">
+          <Editable initialValue="Mission" className="accented" />
+        </h1>
+        <h2 className="round">Round: <Counter onChange={setRound} value={round} /></h2>
+      </section>
       <section className="table">
         <FactionTable />
         <FactionTable />
@@ -32,14 +34,14 @@ const FactionTable: React.FC = () => {
 
   return (
     <article className="table__player">
-      <p>Faction: <Editable initialValue="Name" className="accented" /></p>
+      <p className="table__input-block faction">Faction: <Editable initialValue="Name" className="accented" /></p>
       <p className="important">CP: <Counter onChange={setCurrentCP} value={currentCP} /></p>
-      <p className="important">VP: <span className="accented" style={{ cursor: 'default' }}>{totalVP}</span></p>
+      <p className="important">VP: <span className="accented">{totalVP}</span></p>
       <ul className="objectives">
         <li>Primary: <Counter step={5} onChange={setPrimaryVP} value={primaryVP} /></li>
-        <li><Editable initialValue="Sec 1" />: <Counter onChange={setFirstSecondaryVP} value={firstSecondaryVP} /></li>
-        <li><Editable initialValue="Sec 2" />: <Counter onChange={setSecondSecondaryVP} value={secondSecondaryVP} /></li>
-        <li><Editable initialValue="Sec 3" />: <Counter onChange={setThirdSecondaryVP} value={thirdSecondaryVP} /></li>
+        <li className="table__input-block"><Editable initialValue="Sec 1" />: <Counter onChange={setFirstSecondaryVP} value={firstSecondaryVP} /></li>
+        <li className="table__input-block"><Editable initialValue="Sec 2" />: <Counter onChange={setSecondSecondaryVP} value={secondSecondaryVP} /></li>
+        <li className="table__input-block"><Editable initialValue="Sec 3" />: <Counter onChange={setThirdSecondaryVP} value={thirdSecondaryVP} /></li>
       </ul>
     </article>
   );
@@ -90,7 +92,7 @@ const Counter: React.FC<{ step?: number; onChange: (value: number) => void; valu
   }
 
   return (
-    <span className="accented counter" onClick={handleClick}>{value}</span>
+    <span className="accented counter" style={{ cursor: 'pointer' }} onClick={handleClick}>{value}</span>
   );
 };
 
