@@ -76,7 +76,7 @@ const Editable: React.FC<{ initialValue: string; className?: string; }> = (props
           onFocus={handleFocus}
           spellCheck="false"
         />
-        : <span onClick={handleToggle}>{value || initialValue}</span>
+        : <span onClick={handleToggle}>{value.trim() || initialValue}</span>
       }
     </span>
   );
@@ -88,7 +88,7 @@ const Counter: React.FC<{ step?: number; onChange: (value: number) => void; valu
   const handleClick = (e: React.MouseEvent<HTMLSpanElement>) => {
     const isDecrement = e.shiftKey;
     const nextValue = value + step * (isDecrement ? -1 : 1);
-    onChange(nextValue);
+    onChange(Math.max(0, nextValue));
   }
 
   return (
