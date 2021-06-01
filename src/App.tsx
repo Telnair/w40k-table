@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import './App.css';
 
 const App: React.FC = () => {
+  const [ round, setRound ] = useState(0);
+
   return (
     <main>
       <h1 className="mission">
         <Editable initialValue="Mission" className="accented" />
       </h1>
-      <h2 className="round">Round: <Counter /></h2>
+      <h2 className="round">Round: <Counter onChange={setRound} value={round} /></h2>
       <section className="table">
         <FactionTable />
         <FactionTable />
@@ -17,26 +19,27 @@ const App: React.FC = () => {
 }
 
 const FactionTable: React.FC = () => {
-  const [ victoryPoints, setVictoryPoints ] = useState([ 0, 0, 0, 0 ]);
+  const [ primaryVP, setPrimaryVP ] = useState(0);
+  const [ firstSecondaryVP, setFirstSecondaryVP ] = useState(0);
+  const [ secondSecondaryVP, setSecondSecondaryVP ] = useState(0);
+  const [ thirdSecondaryVP, setThirdSecondaryVP ] = useState(0);
+  const [ currentCP, setCurrentCP ] = useState(0);
 
-  const makeVPChangeHandler = (idx: number) => (value: number) => {
-    const updatedVP = [ ...victoryPoints ];
-    updatedVP[idx] = value;
-    setVictoryPoints(updatedVP);
-  }
-
-  const totalVP = victoryPoints.reduce((res, i) => res += i, 0);
+  const totalVP = useMemo(
+    () => primaryVP + firstSecondaryVP + secondSecondaryVP + thirdSecondaryVP,
+    [ primaryVP, firstSecondaryVP, secondSecondaryVP, thirdSecondaryVP ]
+  );
 
   return (
     <article className="table__player">
       <p>Faction: <Editable initialValue="Name" className="accented" /></p>
-      <p className="important">CP: <Counter /></p>
+      <p className="important">CP: <Counter onChange={setCurrentCP} value={currentCP} /></p>
       <p className="important">VP: <span className="accented" style={{ cursor: 'default' }}>{totalVP}</span></p>
       <ul className="objectives">
-        <li>Primary: <Counter step={5} onChange={makeVPChangeHandler(0)} /></li>
-        <li><Editable initialValue="Sec 1" />: <Counter onChange={makeVPChangeHandler(1)} /></li>
-        <li><Editable initialValue="Sec 2" />: <Counter onChange={makeVPChangeHandler(2)} /></li>
-        <li><Editable initialValue="Sec 3" />: <Counter onChange={makeVPChangeHandler(3)} /></li>
+        <li>Primary: <Counter step={5} onChange={setPrimaryVP} value={primaryVP} /></li>
+        <li><Editable initialValue="Sec 1" />: <Counter onChange={setFirstSecondaryVP} value={firstSecondaryVP} /></li>
+        <li><Editable initialValue="Sec 2" />: <Counter onChange={setSecondSecondaryVP} value={secondSecondaryVP} /></li>
+        <li><Editable initialValue="Sec 3" />: <Counter onChange={setThirdSecondaryVP} value={thirdSecondaryVP} /></li>
       </ul>
     </article>
   );
@@ -53,9 +56,12 @@ const Editable: React.FC<{ initialValue: string; className?: string; }> = (props
 
   const handleToggle = () => setIsEdited(!isEdited);
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => e.target.select();
+  const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleToggle();
+  }
 
   return (
-    <span className={className}>
+    <span className={className} style={{ cursor: 'pointer' }}>
       {isEdited
         ? <input
           type="text"
@@ -63,24 +69,24 @@ const Editable: React.FC<{ initialValue: string; className?: string; }> = (props
           value={value}
           onChange={handleChange}
           onBlur={handleToggle}
+          onKeyDown={handleEnterKey}
           autoFocus
           onFocus={handleFocus}
           spellCheck="false"
         />
-        : <span onClick={handleToggle}>{value || initialValue}</span>}
+        : <span onClick={handleToggle}>{value || initialValue}</span>
+      }
     </span>
   );
 }
 
-const Counter: React.FC<{ initialValue?: number; step?: number; onChange?: (value: number) => void; }> = (props) => {
-  const { initialValue = 0, step = 1, onChange } = props;
-  const [ value, setValue ] = useState(initialValue);
+const Counter: React.FC<{ step?: number; onChange: (value: number) => void; value: number }> = (props) => {
+  const { value, step = 1, onChange } = props;
 
   const handleClick = (e: React.MouseEvent<HTMLSpanElement>) => {
     const isDecrement = e.shiftKey;
     const nextValue = value + step * (isDecrement ? -1 : 1);
-    setValue(nextValue);
-    if (onChange) onChange(nextValue);
+    onChange(nextValue);
   }
 
   return (
